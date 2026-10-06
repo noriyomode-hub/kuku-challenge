@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>九九チャレンジ</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:sans-serif;
+    overflow-y:auto;
+    background:white;
+}
+
+h1{
+    text-align:center;
+    color:#0066cc;
+    font-size:42px;
+    margin:10px;
+}
+
+#menu{
+    text-align:center;
+    margin-top:30px;
+}
+
+#menu button{
+    width:80%;
+    max-width:700px;
+    margin:15px;
+    padding:20px;
+    font-size:32px;
+    background:#4CAF50;
+    color:white;
+    font-weight:bold;
+}
+
+button{
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+#game{
+    display:none;
+    min-height:85vh;
+}
+
+#header{
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+#remain{
+    text-align:center;
+    font-size:32px;
+    color:#0066cc;
+    font-weight:bold;
+}
+
+#mainArea{
+    display:flex;
+}
+
+#leftArea{
+    width:55%;
+    text-align:center;
+}
+
+#rightArea{
+    width:45%;
+    display:flex;
+    justify-content:center;
+    align-items:flex-end;
+    gap:20px;
+    padding-bottom:30px;
+}
+
+#timer{
+    font-size:60px;
+    color:red;
+    font-weight:bold;
+    margin-top:15px;
+}
+
+#question{
+    font-size:90px;
+    margin-top:35px;
+}
+
+#display{
+    font-size:70px;
+    color:#003366;
+    min-height:90px;
+    margin-top:20px;
+}
+
+#enterBtn{
+    width:180px;
+    height:85px;
+    font-size:32px;
+    font-weight:bold;
+    background:#ff9800;
+    white-space:nowrap;
+}
+
+.keypad{
+    display:grid;
+    grid-template-columns:repeat(3,100px);
+    gap:10px;
+}
+
+.keypad button{
+    width:100px;
+    height:85px;
+    font-size:40px;
+    font-weight:bold;
+}
+
+.num{
+    background:#2196F3;
+}
+
+.func{
+    background:#f44336;
+}
+
+#result{
+    display:none;
+    height:85vh;
+}
+
+.resultBox{
+    display:flex;
+    height:100%;
+    padding:15px;
+}
+
+.resultLeft{
+    width:55%;
+    text-align:center;
+}
+.resultRight{
+    width:45%;
+    padding-left:15px;
+
+    display:flex;
+    flex-direction:column;
+}
+
+#resultDate{
+    font-size:42px;
+    color:#0066cc;
+}
+
+#finalTime{
+    font-size:50px;
+    color:red;
+}
+
+#finalCorrect{
+    font-size:50px;
+    color:#0066cc;
+}
+
+#rank{
+    margin:20px;
+    font-weight:bold;
+    font-size:42px;
+    line-height:1.2;
+    white-space:normal;
+}
+
+#mistakes{
+    height:180px;
+    overflow-y:auto;
+    font-size:22px;
+    background:white;
+    padding:12px;
+    border-radius:10px;
+    border:3px solid #cccccc;
+}
+
+#actionArea{
+    margin-top:40px;
+    text-align:center;
+}
+
+.actionBtn{
+    font-size:24px;
+    padding:12px 24px;
+    background:#4CAF50;
+}
+
+#rabbitCelebration{
+    display:none;
+    text-align:center;
+    margin-top:10px;
+}
+
+#rabbitCelebration img{
+    width:100%;
+    max-width:420px;
+    max-height:280px;
+    object-fit:contain;
+}
+
+.master{
+    animation:rainbow 1s infinite;
+}
+
+.good{
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+    0%{opacity:1;}
+    50%{opacity:0.3;}
+    100%{opacity:1;}
+}
+
+@keyframes rainbow{
+    0%{color:red;}
+    20%{color:orange;}
+    40%{color:gold;}
+    60%{color:green;}
+    80%{color:blue;}
+    100%{color:purple;}
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>九九チャレンジ</h1>
+
+<div id="menu">
+
+<h2>
+チャレンジするグループを選ぼう！
+</h2>
+
+<button onclick="startGame([2,3,5])">
+２・３・５の段
+</button>
+
+<br>
+
+<button onclick="startGame([4,6,7])">
+４・６・７の段
+</button>
+
+<br>
+
+<button onclick="startGame([8,9,1])">
+８・９・１の段
+</button>
+
+</div>
+
+<div id="game">
+
+<div id="header"></div>
+
+<div id="remain"></div>
+
+<div id="mainArea">
+
+<div id="leftArea">
+
+<div id="timer">
+0分00秒
+</div>
+
+<div id="question"></div>
+
+<div id="display"></div>
+
+</div>
+
+<div id="rightArea">
+
+<button
+id="enterBtn"
+onclick="checkAnswer()">
+けってい
+</button>
+
+<div class="keypad">
+<button class="num" onclick="addNum('7')">7</button>
+<button class="num" onclick="addNum('8')">8</button>
+<button class="num" onclick="addNum('9')">9</button>
+
+<button class="num" onclick="addNum('4')">4</button>
+<button class="num" onclick="addNum('5')">5</button>
+<button class="num" onclick="addNum('6')">6</button>
+
+<button class="num" onclick="addNum('1')">1</button>
+<button class="num" onclick="addNum('2')">2</button>
+<button class="num" onclick="addNum('3')">3</button>
+
+<button class="func" onclick="clearInput()">C</button>
+<button class="num" onclick="addNum('0')">0</button>
+<button class="func" onclick="backspace()">←</button>
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="result">
+
+<div class="resultBox">
+
+<div class="resultLeft">
+
+<h2 id="resultDate"></h2>
+
+<p style="font-size:40px;">
+タイム：
+<span id="finalTime"></span>
+</p>
+
+<p style="font-size:40px;">
+正解数：
+<span id="finalCorrect"></span>
+</p>
+
+<div id="rank"></div>
+
+</div>
+
+<div class="resultRight">
+
+<h2>
+まちがえた問題
+</h2>
+
+<div id="mistakes"></div>
+
+<div id="actionArea"></div>
+
+<div id="rabbitCelebration">
+
+<img
+src="Designer (2).png"
+alt="お祝い画像">
+
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+
+let questions=[];
+let currentIndex=0;
+let correctCount=0;
+let mistakes=[];
+let currentInput="";
+let startTime;
+let timer;
+let retryMode=false;
+let currentGroup=[];
+
+function startGame(group){
+
+currentGroup=[...group];
+questions=[];
+
+group.forEach(dan=>{
+
+for(let i=1;i<=9;i++){
+
+questions.push({
+dan:dan,
+num:i,
+answer:dan*i
+});
+
+}
+
+});
+
+questions.sort(()=>Math.random()-0.5);
+
+currentIndex=0;
+correctCount=0;
+mistakes=[];
+currentInput="";
+retryMode=false;
+
+document.getElementById("menu").style.display="none";
+document.getElementById("result").style.display="none";
+document.getElementById("game").style.display="block";
+
+document.getElementById("rabbitCelebration").style.display="none";
+document.getElementById("actionArea").innerHTML="";
+
+startTime=Date.now();
+
+clearInterval(timer);
+timer=setInterval(updateTimer,1000);
+
+showQuestion();
+
+}
+
+function updateTimer(){
+
+let sec=Math.floor(
+(Date.now()-startTime)/1000
+);
+
+let m=Math.floor(sec/60);
+let s=sec%60;
+
+document.getElementById("timer").textContent=
+m+"分"+String(s).padStart(2,"0")+"秒";
+
+}
+
+function showQuestion(){
+
+if(currentIndex>=questions.length){
+
+if(retryMode){
+showFinalResult();
+}else{
+if(mistakes.length>0){
+showRetryList();
+}else{
+showFinalResult();
+}
+}
+
+return;
+
+}
+
+let q=questions[currentIndex];
+
+document.getElementById("question").textContent=
+q.dan+" × "+q.num;
+
+document.getElementById("display").textContent=
+currentInput;
+
+document.getElementById("remain").textContent=
+"のこり"+(questions.length-currentIndex)+"問";
+
+}
+function addNum(num){
+
+currentInput += num;
+
+document.getElementById("display").textContent =
+currentInput;
+
+}
+
+function clearInput(){
+
+currentInput="";
+
+document.getElementById("display").textContent="";
+
+}
+
+function backspace(){
+
+currentInput =
+currentInput.slice(0,-1);
+
+document.getElementById("display").textContent =
+currentInput;
+
+}
+
+function checkAnswer(){
+
+if(currentInput===""){
+return;
+}
+
+let q =
+questions[currentIndex];
+
+if(Number(currentInput)===q.answer){
+
+correctCount++;
+
+}else{
+
+mistakes.push({
+dan:q.dan,
+num:q.num,
+answer:q.answer
+});
+
+}
+
+currentInput="";
+currentIndex++;
+
+showQuestion();
+
+}
+
+function showRetryList(){
+
+document.getElementById("game").style.display =
+"none";
+
+document.getElementById("result").style.display =
+"block";
+
+let html="";
+
+mistakes.forEach(m=>{
+
+html +=
+m.dan+
+" × "+
+m.num+
+" = "+
+m.answer+
+"<br>";
+
+});
+
+document.getElementById("mistakes").innerHTML =
+html;
+
+/* ★重ならないように修正 */
+document.getElementById("rank").innerHTML =
+"まちがえた問題を<br>やりなおそう";
+
+document.getElementById("actionArea").innerHTML =
+`
+<button
+class="actionBtn"
+onclick="retryMistakes()">
+まちがいチャレンジ
+</button>
+`;
+
+}
+
+function retryMistakes(){
+
+questions=[];
+
+mistakes.forEach(m=>{
+
+questions.push({
+dan:m.dan,
+num:m.num,
+answer:m.answer
+});
+
+});
+
+mistakes=[];
+currentInput="";
+currentIndex=0;
+
+retryMode=true;
+
+document.getElementById("result").style.display =
+"none";
+
+document.getElementById("game").style.display =
+"block";
+
+showQuestion();
+
+}
+
+function showFinalResult(){
+
+clearInterval(timer);
+
+document.getElementById("game").style.display =
+"none";
+
+document.getElementById("result").style.display =
+"block";
+
+let sec =
+Math.floor(
+(Date.now()-startTime)/1000
+);
+
+let m=Math.floor(sec/60);
+let s=sec%60;
+
+document.getElementById("finalTime").textContent =
+m+"分"+String(s).padStart(2,"0")+"秒";
+
+document.getElementById("finalCorrect").textContent =
+correctCount+" / 27";
+
+let today=new Date();
+
+document.getElementById("resultDate").textContent =
+today.getFullYear()+"年"+
+(today.getMonth()+1)+"月"+
+today.getDate()+"日";
+
+let rankText="";
+let rankClass="";
+
+if(sec<=60){
+
+rankText="🌈 九九マスター 🌈";
+rankClass="master";
+
+document.getElementById("rabbitCelebration")
+.style.display="block";
+
+}
+else if(sec<=90){
+
+rankText="🎉 おみごと！ 🎉";
+rankClass="good";
+
+document.getElementById("rabbitCelebration")
+.style.display="block";
+
+}
+else if(sec<=120){
+
+rankText="😊 よくできました！";
+
+}
+else if(sec<=180){
+
+rankText="👍 がんばったね！";
+
+}
+else{
+
+rankText="またチャレンジしてね！";
+
+}
+
+let rank =
+document.getElementById("rank");
+
+rank.textContent=rankText;
+rank.className=rankClass;
+
+document.getElementById("mistakes").innerHTML =
+retryMode
+? "すべてクリアしました！"
+: "まちがいなし！";
+
+document.getElementById("actionArea").innerHTML =
+`
+<button
+class="actionBtn"
+onclick="restartGame()">
+もういちどチャレンジ
+</button>
+`;
+
+}
+
+function restartGame(){
+
+document.getElementById("result").style.display =
+"none";
+
+document.getElementById("menu").style.display =
+"block";
+
+document.getElementById("display").textContent="";
+document.getElementById("question").textContent="";
+document.getElementById("remain").textContent="";
+
+currentInput="";
+mistakes=[];
+questions=[];
+retryMode=false;
+
+}
+
+</script>
+
+</body>
+</html>
