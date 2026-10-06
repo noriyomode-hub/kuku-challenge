@@ -119,14 +119,17 @@ button{
     height:85px;
     font-size:40px;
     font-weight:bold;
+    color:black;
 }
 
 .num{
     background:#2196F3;
+    color:black;
 }
 
 .func{
     background:#f44336;
+    color:black;
 }
 
 #result{
@@ -368,6 +371,7 @@ let startTime;
 let timer;
 let retryMode=false;
 let currentGroup=[];
+let perfectClear=false;    
 
 function startGame(group){
 
@@ -395,7 +399,7 @@ correctCount=0;
 mistakes=[];
 currentInput="";
 retryMode=false;
-
+perfectClear=false;
 document.getElementById("menu").style.display="none";
 document.getElementById("result").style.display="none";
 document.getElementById("game").style.display="block";
@@ -434,8 +438,10 @@ if(retryMode){
 showFinalResult();
 }else{
 if(mistakes.length>0){
+perfectClear=false;
 showRetryList();
 }else{
+perfectClear=true;
 showFinalResult();
 }
 }
@@ -514,7 +520,7 @@ showQuestion();
 }
 
 function showRetryList(){
-
+perfectClear=false;
 document.getElementById("game").style.display =
 "none";
 
@@ -621,16 +627,17 @@ if(sec<=60){
 
 rankText="🌈 九九マスター 🌈";
 rankClass="master";
-
+if(perfectClear)
 document.getElementById("rabbitCelebration")
 .style.display="block";
 
+}
 }
 else if(sec<=90){
 
 rankText="🎉 おみごと！ 🎉";
 rankClass="good";
-
+if(perfectClear){
 document.getElementById("rabbitCelebration")
 .style.display="block";
 
